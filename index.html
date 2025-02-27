@@ -3,41 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Live Prices - MVR</title>
+    <title>Price Tracker</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-    <header>
-        <h1>Live Item Prices (MVR)</h1>
-        <nav>
-            <a href="https://t.me/yourtelegram" target="_blank">Telegram</a>
-            <a href="https://wa.me/yourwhatsapp" target="_blank">WhatsApp</a>
-            <a href="viber://chat?number=yourviber" target="_blank">Viber</a>
-        </nav>
-    </header>
-
-    <main>
-        <h2>Available Items</h2>
-        <ul id="item-list"></ul>
-
-        <button id="admin-login-btn">Admin Login</button>
-
-        <div id="admin-panel" class="hidden">
-            <h2>Admin Panel</h2>
-            <form id="admin-form">
-                <input type="text" id="item-name" placeholder="Item Name" required>
-                <input type="number" id="item-price" placeholder="Price (MVR)" required>
-                <input type="number" id="item-amount" placeholder="Amount (KG or QTY)" required>
-                <select id="item-unit">
-                    <option value="KG">KG</option>
-                    <option value="QTY">QTY</option>
-                </select>
-                <button type="submit">Add / Update Price</button>
-            </form>
-            <button id="admin-logout-btn">Logout</button>
+    <div class="container">
+        <!-- Admin Section -->
+        <div class="admin-section">
+            <div id="adminLogin">
+                <h2>Admin Login</h2>
+                <input type="password" id="adminPassword" placeholder="Admin Password">
+                <button onclick="loginAdmin()">Login</button>
+                <div id="loginError" class="error-message"></div>
+            </div>
+            
+            <div id="adminControls" style="display: none;">
+                <h2>Admin Controls</h2>
+                <div class="form-group">
+                    <input type="text" id="itemName" placeholder="Item Name">
+                    <input type="number" id="itemPrice" placeholder="Price" step="0.01">
+                    <button onclick="addOrUpdateItem()">Save Item</button>
+                </div>
+                <div id="saveStatus" class="status-message"></div>
+            </div>
         </div>
-    </main>
 
-    <script src="script.js"></script>
+        <!-- User View -->
+        <div class="user-section">
+            <h2>Current Prices</h2>
+            <div id="itemsList" class="items-container"></div>
+        </div>
+
+        <!-- User Order Section -->
+        <div class="order-section">
+            <h2>Place an Order</h2>
+            <div class="form-group">
+                <input type="text" id="orderName" placeholder="Your Name">
+                <input type="text" id="orderItem" placeholder="Item Name">
+                <input type="number" id="orderQuantity" placeholder="Quantity">
+                <button onclick="placeOrder()">Place Order</button>
+            </div>
+            <div id="orderStatus" class="status-message"></div>
+        </div>
+
+        <!-- Social Media Icons -->
+        <div class="social-icons">
+            <a href="https://viber.com" target="_blank"><i class="fab fa-viber"></i></a>
+            <a href="https://whatsapp.com" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://telegram.org" target="_blank"><i class="fab fa-telegram"></i></a>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="app.js"></script>
 </body>
 </html>
