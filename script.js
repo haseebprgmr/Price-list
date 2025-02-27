@@ -10,14 +10,16 @@ async function fetchItems() {
     });
 
     const data = await response.json();
-    const items = data.record.items;
+    const items = data.record.items || [];
 
     const itemList = document.getElementById("item-list");
     itemList.innerHTML = "";
 
-    items.forEach(item => {
+    items.forEach((item, index) => {
         const li = document.createElement("li");
-        li.textContent = `${item.name}: $${item.price}`;
+        li.innerHTML = `${item.name}: MVR ${item.price} 
+            <button class="edit-btn" onclick="editItem(${index})">Edit</button>
+            <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>`;
         itemList.appendChild(li);
     });
 }
@@ -38,10 +40,15 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
     // Fetch current data
     const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
     const data = await response.json();
-    const items = data.record.items || [];
+    let items = data.record.items || [];
 
-    // Add new item
-    items.push({ name, price });
+    // Check if item exists and update, otherwise add new
+    const existingItem = items.find(item => item.name === name);
+    if (existingItem) {
+        existingItem.price = price;
+    } else {
+        items.push({ name, price });
+    }
 
     // Update JSONBin
     await fetch(apiUrl, {
@@ -55,6 +62,64 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
 
     fetchItems();
 });
+
+// Edit Item
+async function editItem(index) {
+    const password = prompt("Enter Admin Password:");
+    if (password !== adminPassword) {
+        alert("Incorrect password!");
+        return;
+    }
+
+    const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
+    const data = await response.json();
+    let items = data.record.items || [];
+
+    const newName = prompt("Edit Item Name:", items[index].name);
+    const newPrice = prompt("Edit Price (MVR):", items[index].price);
+
+    if (newName && newPrice) {
+        items[index].name = newName;
+        items[index].price = newPrice;
+
+        await fetch(apiUrl, {
+            method: "PUT",
+            headers: { 
+                "X-Master-Key": apiKey,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ items })
+        });
+
+        fetchItems();
+    }
+}
+
+// Delete Item
+async function deleteItem(index) {
+    const password = prompt("Enter Admin Password:");
+    if (password !== adminPassword) {
+        alert("Incorrect password!");
+        return;
+    }
+
+    const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
+    const data = await response.json();
+    let items = data.record.items || [];
+
+    items.splice(index, 1); // Remove item
+
+    await fetch(apiUrl, {
+        method: "PUT",
+        headers: { 
+            "X-Master-Key": apiKey,
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ items })
+    });
+
+    fetchItems();
+}
 
 // Load items on page load
 fetchItems();
