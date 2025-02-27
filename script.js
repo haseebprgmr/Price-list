@@ -52,9 +52,16 @@ async function fetchItems() {
 
     items.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `${item.name}: MVR ${item.price} per ${item.amount} ${item.unit}
-            <button class="edit-btn hidden" onclick="editItem(${index})">Edit</button>
-            <button class="delete-btn hidden" onclick="deleteItem(${index})">Delete</button>`;
+        li.classList.add("item-card");
+
+        li.innerHTML = `
+            <div class="item-name">${item.name}</div>
+            <div class="item-price">MVR ${item.price} per ${item.amount} ${item.unit}</div>
+            <div class="admin-buttons">
+                <button class="edit-btn hidden" onclick="editItem(${index})">Edit</button>
+                <button class="delete-btn hidden" onclick="deleteItem(${index})">Delete</button>
+            </div>
+        `;
         itemList.appendChild(li);
     });
 
@@ -73,7 +80,7 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
     const unit = document.getElementById("item-unit").value;
 
     if (!name || !price || !amount) {
-        alert("Item name, price, and amount are required.");
+        alert("All fields are required.");
         return;
     }
 
@@ -92,67 +99,12 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
 
     await fetch(apiUrl, {
         method: "PUT",
-        headers: { 
-            "X-Master-Key": apiKey,
-            "Content-Type": "application/json"
-        },
+        headers: { "X-Master-Key": apiKey, "Content-Type": "application/json" },
         body: JSON.stringify({ items })
     });
 
     fetchItems();
 });
-
-// Edit Item
-async function editItem(index) {
-    const newPrice = prompt("Enter new price (MVR):");
-    const newAmount = prompt("Enter new amount (KG or QTY):");
-    const newUnit = prompt("Enter new unit (KG or QTY):").toUpperCase();
-    
-    if (newPrice !== null && newAmount !== null && (newUnit === "KG" || newUnit === "QTY")) {
-        const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
-        const data = await response.json();
-        let items = data.record.items || [];
-
-        items[index].price = newPrice;
-        items[index].amount = newAmount;
-        items[index].unit = newUnit;
-
-        await fetch(apiUrl, {
-            method: "PUT",
-            headers: { 
-                "X-Master-Key": apiKey,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ items })
-        });
-
-        fetchItems();
-    } else {
-        alert("Invalid input. Please enter a valid price, amount, and unit.");
-    }
-}
-
-// Delete Item
-async function deleteItem(index) {
-    if (confirm("Are you sure you want to delete this item?")) {
-        const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
-        const data = await response.json();
-        let items = data.record.items || [];
-
-        items.splice(index, 1);
-
-        await fetch(apiUrl, {
-            method: "PUT",
-            headers: { 
-                "X-Master-Key": apiKey,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ items })
-        });
-
-        fetchItems();
-    }
-}
 
 // Load items on page load
 fetchItems();
