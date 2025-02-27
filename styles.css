@@ -46,19 +46,9 @@ li {
     background: #eee;
     margin: 5px 0;
     border-radius: 5px;
-}
-
-form {
-    margin-top: 20px;
-}
-
-input, button {
-    padding: 10px;
-    margin: 5px;
-    width: 90%;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 button {
@@ -66,8 +56,27 @@ button {
     color: white;
     border: none;
     cursor: pointer;
+    padding: 8px 12px;
+    margin-left: 5px;
+    border-radius: 4px;
 }
 
 button:hover {
     background: #0056b3;
+}
+
+.delete-btn {
+    background: red;
+}
+
+.delete-btn:hover {
+    background: darkred;
+}
+
+.edit-btn {
+    background: orange;
+}
+
+.edit-btn:hover {
+    background: darkorange;
 }
