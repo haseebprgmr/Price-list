@@ -1,6 +1,7 @@
-const binId = "67bfc726e41b4d34e49d8ae6"; 
+const binId = "67bfc726e41b4d34e49d8ae6";
 const apiKey = "$2a$10$NclxDQUlXF9OtuxdQxDxVug.8VmB2C0VFq1qRRIHOgR4k.GYxKB/O";
 const apiUrl = `https://api.jsonbin.io/v3/b/${binId}`;
+const adminPassword = "admin123"; // Change this to your own password
 
 // Fetch and display items
 async function fetchItems() {
@@ -21,9 +22,16 @@ async function fetchItems() {
     });
 }
 
-// Submit new item data
+// Submit new item data (Admin Only)
 document.getElementById("admin-form").addEventListener("submit", async (e) => {
     e.preventDefault();
+
+    const passwordInput = document.getElementById("admin-password").value;
+    if (passwordInput !== adminPassword) {
+        alert("Incorrect Admin Password!");
+        return;
+    }
+
     const name = document.getElementById("item-name").value;
     const price = document.getElementById("item-price").value;
 
