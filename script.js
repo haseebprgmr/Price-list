@@ -12,7 +12,7 @@ function loginAdmin() {
   const errorDiv = document.getElementById('loginError');
   
   // Basic password check
-  if (password === 'admin123') {
+  if (password === 'password123') {
     isAdmin = true;
     document.getElementById('adminControls').style.display = 'block';
     document.getElementById('adminLogin').style.display = 'none';
