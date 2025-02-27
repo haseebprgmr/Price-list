@@ -1,5 +1,5 @@
 // JSONBin.io Configuration
-const binId = '67bfc726e41b4d34e49d8ae6'; // Replace with your actual Bin ID
+const binId = '67c0a877acd3cb34a8f21f9e'; // Replace with your actual Bin ID
 const apiKey = '$2a$10$PBdovtf4GVCRv1mFrs4EReP7QAkgpDl4CE69Cn7I5CdN3Z44ZaXX.'; // Replace with your actual API Key
 
 // App State
