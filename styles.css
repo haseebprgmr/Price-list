@@ -1,30 +1,9 @@
-body {
-    font-family: 'Arial', sans-serif;
-    background: #f4f4f4;
-    text-align: center;
-    padding: 20px;
+.hidden {
+    display: none;
 }
 
-header {
-    background: #007bff;
-    color: white;
-    padding: 15px;
-    font-size: 24px;
-}
-
-nav a {
-    color: white;
-    margin: 0 10px;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-nav a:hover {
-    text-decoration: underline;
-}
-
-main {
-    background: white;
+#admin-panel {
+    background: #fff;
     padding: 20px;
     margin: 20px auto;
     width: 50%;
@@ -32,51 +11,8 @@ main {
     box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
-h2 {
-    color: #333;
-}
-
-ul {
-    list-style: none;
-    padding: 0;
-}
-
-li {
-    padding: 10px;
-    background: #eee;
-    margin: 5px 0;
-    border-radius: 5px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
 button {
-    background: #007bff;
-    color: white;
-    border: none;
+    margin: 5px;
+    padding: 10px;
     cursor: pointer;
-    padding: 8px 12px;
-    margin-left: 5px;
-    border-radius: 4px;
-}
-
-button:hover {
-    background: #0056b3;
-}
-
-.delete-btn {
-    background: red;
-}
-
-.delete-btn:hover {
-    background: darkred;
-}
-
-.edit-btn {
-    background: orange;
-}
-
-.edit-btn:hover {
-    background: darkorange;
 }
