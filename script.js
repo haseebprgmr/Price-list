@@ -52,7 +52,7 @@ async function fetchItems() {
 
     items.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `${item.name}: MVR ${item.price} per ${item.unit} 
+        li.innerHTML = `${item.name}: MVR ${item.price} per ${item.amount} ${item.unit}
             <button class="edit-btn hidden" onclick="editItem(${index})">Edit</button>
             <button class="delete-btn hidden" onclick="deleteItem(${index})">Delete</button>`;
         itemList.appendChild(li);
@@ -69,10 +69,11 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
 
     const name = document.getElementById("item-name").value.trim();
     const price = document.getElementById("item-price").value.trim();
+    const amount = document.getElementById("item-amount").value.trim();
     const unit = document.getElementById("item-unit").value;
 
-    if (!name || !price) {
-        alert("Item name, price, and unit are required.");
+    if (!name || !price || !amount) {
+        alert("Item name, price, and amount are required.");
         return;
     }
 
@@ -83,9 +84,10 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
     const existingIndex = items.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
     if (existingIndex !== -1) {
         items[existingIndex].price = price;
+        items[existingIndex].amount = amount;
         items[existingIndex].unit = unit;
     } else {
-        items.push({ name, price, unit });
+        items.push({ name, price, amount, unit });
     }
 
     await fetch(apiUrl, {
@@ -103,14 +105,16 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
 // Edit Item
 async function editItem(index) {
     const newPrice = prompt("Enter new price (MVR):");
+    const newAmount = prompt("Enter new amount (KG or QTY):");
     const newUnit = prompt("Enter new unit (KG or QTY):").toUpperCase();
     
-    if (newPrice !== null && (newUnit === "KG" || newUnit === "QTY")) {
+    if (newPrice !== null && newAmount !== null && (newUnit === "KG" || newUnit === "QTY")) {
         const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
         const data = await response.json();
         let items = data.record.items || [];
 
         items[index].price = newPrice;
+        items[index].amount = newAmount;
         items[index].unit = newUnit;
 
         await fetch(apiUrl, {
@@ -124,7 +128,7 @@ async function editItem(index) {
 
         fetchItems();
     } else {
-        alert("Invalid input. Please enter a valid price and unit.");
+        alert("Invalid input. Please enter a valid price, amount, and unit.");
     }
 }
 
