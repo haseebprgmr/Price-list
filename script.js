@@ -17,14 +17,15 @@ async function fetchItems() {
 
     items.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `${item.name}: MVR ${item.price} 
+        li.innerHTML = `
+            ${item.name}: MVR ${item.price} 
             <button class="edit-btn" onclick="editItem(${index})">Edit</button>
             <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>`;
         itemList.appendChild(li);
     });
 }
 
-// Submit new item data (Admin Only)
+// Submit new or updated item data
 document.getElementById("admin-form").addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -34,18 +35,22 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
         return;
     }
 
-    const name = document.getElementById("item-name").value;
-    const price = document.getElementById("item-price").value;
+    const name = document.getElementById("item-name").value.trim();
+    const price = document.getElementById("item-price").value.trim();
 
-    // Fetch current data
+    if (!name || !price) {
+        alert("Item name and price are required.");
+        return;
+    }
+
     const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
     const data = await response.json();
     let items = data.record.items || [];
 
-    // Check if item exists and update, otherwise add new
-    const existingItem = items.find(item => item.name === name);
-    if (existingItem) {
-        existingItem.price = price;
+    // Check if the item already exists
+    const existingIndex = items.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
+    if (existingIndex !== -1) {
+        items[existingIndex].price = price;
     } else {
         items.push({ name, price });
     }
@@ -75,11 +80,9 @@ async function editItem(index) {
     const data = await response.json();
     let items = data.record.items || [];
 
-    const newName = prompt("Edit Item Name:", items[index].name);
-    const newPrice = prompt("Edit Price (MVR):", items[index].price);
+    const newPrice = prompt(`Edit price for ${items[index].name}:`, items[index].price);
 
-    if (newName && newPrice) {
-        items[index].name = newName;
+    if (newPrice !== null) {
         items[index].price = newPrice;
 
         await fetch(apiUrl, {
@@ -107,18 +110,20 @@ async function deleteItem(index) {
     const data = await response.json();
     let items = data.record.items || [];
 
-    items.splice(index, 1); // Remove item
+    if (confirm(`Are you sure you want to delete ${items[index].name}?`)) {
+        items.splice(index, 1);
 
-    await fetch(apiUrl, {
-        method: "PUT",
-        headers: { 
-            "X-Master-Key": apiKey,
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ items })
-    });
+        await fetch(apiUrl, {
+            method: "PUT",
+            headers: { 
+                "X-Master-Key": apiKey,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ items })
+        });
 
-    fetchItems();
+        fetchItems();
+    }
 }
 
 // Load items on page load
