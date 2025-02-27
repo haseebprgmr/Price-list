@@ -6,14 +6,16 @@ const adminPassword = "admin123"; // Change this
 const adminPanel = document.getElementById("admin-panel");
 const adminLoginBtn = document.getElementById("admin-login-btn");
 const adminLogoutBtn = document.getElementById("admin-logout-btn");
+let isAdmin = false; // Track admin state
 
 // Admin login
 adminLoginBtn.addEventListener("click", () => {
     const password = prompt("Enter Admin Password:");
     if (password === adminPassword) {
+        isAdmin = true;
         adminPanel.classList.remove("hidden");
         adminLoginBtn.classList.add("hidden");
-        document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.remove("hidden"));
+        showAdminControls();
     } else {
         alert("Incorrect password!");
     }
@@ -21,10 +23,20 @@ adminLoginBtn.addEventListener("click", () => {
 
 // Admin logout
 adminLogoutBtn.addEventListener("click", () => {
+    isAdmin = false;
     adminPanel.classList.add("hidden");
     adminLoginBtn.classList.remove("hidden");
-    document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.add("hidden"));
+    hideAdminControls();
 });
+
+// Show/hide admin buttons
+function showAdminControls() {
+    document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.remove("hidden"));
+}
+
+function hideAdminControls() {
+    document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.add("hidden"));
+}
 
 // Fetch and display items
 async function fetchItems() {
@@ -46,8 +58,8 @@ async function fetchItems() {
         itemList.appendChild(li);
     });
 
-    if (!adminPanel.classList.contains("hidden")) {
-        document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.remove("hidden"));
+    if (isAdmin) {
+        showAdminControls();
     }
 }
 
