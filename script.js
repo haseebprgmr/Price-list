@@ -1,7 +1,30 @@
 const binId = "67bfc726e41b4d34e49d8ae6";
 const apiKey = "$2a$10$NclxDQUlXF9OtuxdQxDxVug.8VmB2C0VFq1qRRIHOgR4k.GYxKB/O";
 const apiUrl = `https://api.jsonbin.io/v3/b/${binId}`;
-const adminPassword = "admin123"; // Change this to your own password
+const adminPassword = "admin123"; // Change this
+
+const adminPanel = document.getElementById("admin-panel");
+const adminLoginBtn = document.getElementById("admin-login-btn");
+const adminLogoutBtn = document.getElementById("admin-logout-btn");
+
+// Admin login
+adminLoginBtn.addEventListener("click", () => {
+    const password = prompt("Enter Admin Password:");
+    if (password === adminPassword) {
+        adminPanel.classList.remove("hidden");
+        adminLoginBtn.classList.add("hidden");
+        document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.remove("hidden"));
+    } else {
+        alert("Incorrect password!");
+    }
+});
+
+// Admin logout
+adminLogoutBtn.addEventListener("click", () => {
+    adminPanel.classList.add("hidden");
+    adminLoginBtn.classList.remove("hidden");
+    document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.add("hidden"));
+});
 
 // Fetch and display items
 async function fetchItems() {
@@ -17,23 +40,20 @@ async function fetchItems() {
 
     items.forEach((item, index) => {
         const li = document.createElement("li");
-        li.innerHTML = `
-            ${item.name}: MVR ${item.price} 
-            <button class="edit-btn" onclick="editItem(${index})">Edit</button>
-            <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>`;
+        li.innerHTML = `${item.name}: MVR ${item.price} 
+            <button class="edit-btn hidden" onclick="editItem(${index})">Edit</button>
+            <button class="delete-btn hidden" onclick="deleteItem(${index})">Delete</button>`;
         itemList.appendChild(li);
     });
+
+    if (!adminPanel.classList.contains("hidden")) {
+        document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.remove("hidden"));
+    }
 }
 
 // Submit new or updated item data
 document.getElementById("admin-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    const passwordInput = document.getElementById("admin-password").value;
-    if (passwordInput !== adminPassword) {
-        alert("Incorrect Admin Password!");
-        return;
-    }
 
     const name = document.getElementById("item-name").value.trim();
     const price = document.getElementById("item-price").value.trim();
@@ -47,7 +67,6 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
     const data = await response.json();
     let items = data.record.items || [];
 
-    // Check if the item already exists
     const existingIndex = items.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
     if (existingIndex !== -1) {
         items[existingIndex].price = price;
@@ -55,7 +74,6 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
         items.push({ name, price });
     }
 
-    // Update JSONBin
     await fetch(apiUrl, {
         method: "PUT",
         headers: { 
@@ -70,19 +88,12 @@ document.getElementById("admin-form").addEventListener("submit", async (e) => {
 
 // Edit Item
 async function editItem(index) {
-    const password = prompt("Enter Admin Password:");
-    if (password !== adminPassword) {
-        alert("Incorrect password!");
-        return;
-    }
-
-    const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
-    const data = await response.json();
-    let items = data.record.items || [];
-
-    const newPrice = prompt(`Edit price for ${items[index].name}:`, items[index].price);
-
+    const newPrice = prompt("Enter new price (MVR):");
     if (newPrice !== null) {
+        const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
+        const data = await response.json();
+        let items = data.record.items || [];
+
         items[index].price = newPrice;
 
         await fetch(apiUrl, {
@@ -100,17 +111,11 @@ async function editItem(index) {
 
 // Delete Item
 async function deleteItem(index) {
-    const password = prompt("Enter Admin Password:");
-    if (password !== adminPassword) {
-        alert("Incorrect password!");
-        return;
-    }
+    if (confirm("Are you sure you want to delete this item?")) {
+        const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
+        const data = await response.json();
+        let items = data.record.items || [];
 
-    const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
-    const data = await response.json();
-    let items = data.record.items || [];
-
-    if (confirm(`Are you sure you want to delete ${items[index].name}?`)) {
         items.splice(index, 1);
 
         await fetch(apiUrl, {
