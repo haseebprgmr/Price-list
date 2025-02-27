@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Prices</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Live Item Prices</h1>
+        <nav>
+            <a href="https://t.me/yourtelegram" target="_blank">Telegram</a>
+            <a href="https://wa.me/yourwhatsapp" target="_blank">WhatsApp</a>
+            <a href="viber://chat?number=yourviber" target="_blank">Viber</a>
+        </nav>
+    </header>
+
+    <main>
+        <h2>Items</h2>
+        <ul id="item-list"></ul>
+
+        <h2>Admin Panel</h2>
+        <form id="admin-form">
+            <input type="text" id="item-name" placeholder="Item Name" required>
+            <input type="number" id="item-price" placeholder="Price" required>
+            <button type="submit">Update Price</button>
+        </form>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
