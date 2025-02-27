@@ -1,110 +1,162 @@
-const binId = "67bfc726e41b4d34e49d8ae6";
-const apiKey = "$2a$10$NclxDQUlXF9OtuxdQxDxVug.8VmB2C0VFq1qRRIHOgR4k.GYxKB/O";
-const apiUrl = `https://api.jsonbin.io/v3/b/${binId}`;
-const adminPassword = "admin123"; // Change this
+// JSONBin.io Configuration
+const binId = '67bfc726e41b4d34e49d8ae6'; // Replace with your actual Bin ID
+const apiKey = '$2a$10$PBdovtf4GVCRv1mFrs4EReP7QAkgpDl4CE69Cn7I5CdN3Z44ZaXX.'; // Replace with your actual API Key
 
-const adminPanel = document.getElementById("admin-panel");
-const adminLoginBtn = document.getElementById("admin-login-btn");
-const adminLogoutBtn = document.getElementById("admin-logout-btn");
+// App State
 let isAdmin = false;
 
-// Admin login
-adminLoginBtn.addEventListener("click", () => {
-    const password = prompt("Enter Admin Password:");
-    if (password === adminPassword) {
+// Authentication
+function loginAdmin() {
+    const password = document.getElementById('adminPassword').value;
+    const errorDiv = document.getElementById('loginError');
+    
+    // Basic password check
+    if(password === 'admin123') {
         isAdmin = true;
-        adminPanel.classList.remove("hidden");
-        adminLoginBtn.classList.add("hidden");
-        showAdminControls();
+        document.getElementById('adminControls').style.display = 'block';
+        document.getElementById('adminLogin').style.display = 'none';
+        errorDiv.textContent = '';
+        showMessage('Login successful!', 'success');
+        loadItems();
     } else {
-        alert("Incorrect password!");
-    }
-});
-
-// Admin logout
-adminLogoutBtn.addEventListener("click", () => {
-    isAdmin = false;
-    adminPanel.classList.add("hidden");
-    adminLoginBtn.classList.remove("hidden");
-    hideAdminControls();
-});
-
-// Show/hide admin buttons
-function showAdminControls() {
-    document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.remove("hidden"));
-}
-
-function hideAdminControls() {
-    document.querySelectorAll(".edit-btn, .delete-btn").forEach(btn => btn.classList.add("hidden"));
-}
-
-// Fetch and display items
-async function fetchItems() {
-    const response = await fetch(apiUrl, {
-        headers: { "X-Master-Key": apiKey }
-    });
-
-    const data = await response.json();
-    const items = data.record.items || [];
-
-    const itemList = document.getElementById("item-list");
-    itemList.innerHTML = "";
-
-    items.forEach((item, index) => {
-        const li = document.createElement("li");
-        li.classList.add("item-card");
-
-        li.innerHTML = `
-            <div class="item-name">${item.name}</div>
-            <div class="item-price">MVR ${item.price} per ${item.amount} ${item.unit}</div>
-            <div class="admin-buttons">
-                <button class="edit-btn hidden" onclick="editItem(${index})">Edit</button>
-                <button class="delete-btn hidden" onclick="deleteItem(${index})">Delete</button>
-            </div>
-        `;
-        itemList.appendChild(li);
-    });
-
-    if (isAdmin) {
-        showAdminControls();
+        errorDiv.textContent = 'Invalid password!';
+        showMessage('Authentication failed', 'error');
     }
 }
 
-// Submit new or updated item data
-document.getElementById("admin-form").addEventListener("submit", async (e) => {
-    e.preventDefault();
+// Database Operations
+async function addOrUpdateItem() {
+    const name = document.getElementById('itemName').value.trim();
+    const price = document.getElementById('itemPrice').value;
+    const statusDiv = document.getElementById('saveStatus');
 
-    const name = document.getElementById("item-name").value.trim();
-    const price = document.getElementById("item-price").value.trim();
-    const amount = document.getElementById("item-amount").value.trim();
-    const unit = document.getElementById("item-unit").value;
+    console.log("Adding item:", { name, price }); // Debug log
 
-    if (!name || !price || !amount) {
-        alert("All fields are required.");
+    if (!isAdmin) {
+        showMessage('Unauthorized access!', 'error');
         return;
     }
 
-    const response = await fetch(apiUrl, { headers: { "X-Master-Key": apiKey } });
-    const data = await response.json();
-    let items = data.record.items || [];
-
-    const existingIndex = items.findIndex(item => item.name.toLowerCase() === name.toLowerCase());
-    if (existingIndex !== -1) {
-        items[existingIndex].price = price;
-        items[existingIndex].amount = amount;
-        items[existingIndex].unit = unit;
-    } else {
-        items.push({ name, price, amount, unit });
+    if (!name || !price) {
+        showMessage('Please fill all fields!', 'error');
+        return;
     }
 
-    await fetch(apiUrl, {
-        method: "PUT",
-        headers: { "X-Master-Key": apiKey, "Content-Type": "application/json" },
-        body: JSON.stringify({ items })
+    try {
+        const timestamp = new Date().toISOString();
+        
+        // Fetch existing items
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+            headers: { 'X-Master-Key': apiKey }
+        });
+        const { record: items } = await response.json();
+
+        // Add or update item
+        items[name] = { price: parseFloat(price), timestamp };
+
+        // Save updated items
+        await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': apiKey
+            },
+            body: JSON.stringify(items)
+        });
+
+        console.log("Item saved successfully!"); // Debug log
+        showMessage('Item saved successfully!', 'success');
+        clearForm();
+        loadItems(); // Refresh the list
+    } catch (error) {
+        console.error("Database error:", error); // Debug log
+        showMessage(`Error: ${error.message}`, 'error');
+    }
+}
+
+// Load Items
+async function loadItems() {
+    try {
+        const response = await fetch(`https://api.jsonbin.io/v3/b/${binId}`, {
+            headers: { 'X-Master-Key': apiKey }
+        });
+        const { record: items } = await response.json();
+
+        console.log("Database snapshot:", items); // Debug log
+        displayItems(items);
+    } catch (error) {
+        console.error("Error loading items:", error); // Debug log
+    }
+}
+
+// Display Items
+function displayItems(items) {
+    const itemsList = document.getElementById('itemsList');
+    itemsList.innerHTML = '';
+
+    if (!items || Object.keys(items).length === 0) {
+        console.log("No items found in the database."); // Debug log
+        itemsList.innerHTML = '<p>No items available.</p>';
+        return;
+    }
+
+    Object.entries(items).forEach(([name, details]) => {
+        const itemElement = document.createElement('div');
+        itemElement.className = 'item-card';
+        itemElement.innerHTML = `
+            <h3>${name}</h3>
+            <p>Price: $${details.price.toFixed(2)}</p>
+            <p class="timestamp">Last updated: ${new Date(details.timestamp).toLocaleString()}</p>
+        `;
+        itemsList.appendChild(itemElement);
     });
+}
 
-    fetchItems();
+// Place Order
+function placeOrder() {
+    const name = document.getElementById('orderName').value.trim();
+    const item = document.getElementById('orderItem').value.trim();
+    const quantity = document.getElementById('orderQuantity').value.trim();
+    const statusDiv = document.getElementById('orderStatus');
+
+    if (!name || !item || !quantity) {
+        showMessage('Please fill all fields!', 'error', statusDiv);
+        return;
+    }
+
+    const order = {
+        name,
+        item,
+        quantity,
+        timestamp: new Date().toISOString()
+    };
+
+    // Save order as a text file
+    const blob = new Blob([JSON.stringify(order, null, 2)], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `order_${name}_${new Date().toISOString()}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    showMessage('Order placed successfully!', 'success', statusDiv);
+}
+
+// Helpers
+function showMessage(message, type, element) {
+    const statusDiv = element || document.getElementById('saveStatus');
+    statusDiv.textContent = message;
+    statusDiv.className = `status-message ${type}`;
+    setTimeout(() => statusDiv.textContent = '', 3000);
+}
+
+function clearForm() {
+    document.getElementById('itemName').value = '';
+    document.getElementById('itemPrice').value = '';
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+    loadItems();
 });
-
-// Load items on page load
-fetchItems();
