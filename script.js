@@ -1,4 +1,4 @@
-const BIN_ID = '67c0ae51ad19ca34f813a934'; // Replace with your Bin ID
+const BIN_ID = '67c116dbad19ca34f813d134'; // Replace with your Bin ID
 const API_KEY = '$2a$10$PBdovtf4GVCRv1mFrs4EReP7QAkgpDl4CE69Cn7I5CdN3Z44ZaXX.'; // Replace with your API Key
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
