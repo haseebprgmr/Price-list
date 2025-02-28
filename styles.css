@@ -1,5 +1,25 @@
-/* Custom styles (if needed) */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
+body {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+h1 {
+    color: #333;
+}
+
+form {
+    margin: 20px auto;
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+input, button {
+    margin: 5px 0;
+    padding: 10px;
+}
+
+ul {
+    list-style: none;
 }
