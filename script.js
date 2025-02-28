@@ -19,12 +19,13 @@ async function fetchItems() {
 function displayItems(items) {
   const itemList = document.getElementById('item-list');
   itemList.innerHTML = items.map(item => `
-    <div class="bg-white p-4 rounded shadow">
-      <h2 class="text-xl font-bold">${item.name}</h2>
-      <p>Price per Kg: $${item.priceKg}</p>
-      <p>Price per Qty: $${item.priceQty}</p>
+    <div class="item-card bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition duration-300">
+      <h2 class="text-2xl font-bold text-purple-800 mb-2">${item.name}</h2>
+      <p class="text-gray-600 mb-1"><span class="font-semibold">Price per Kg:</span> $${item.priceKg}</p>
+      <p class="text-gray-600"><span class="font-semibold">Price per Qty:</span> $${item.priceQty}</p>
     </div>
   `).join('');
+}
 }
 
 // Refresh items every 5 seconds
