@@ -1,5 +1,5 @@
-const BIN_ID = '67c0ae51ad19ca34f813a934'; // Replace with your JSONBin.io bin ID
-const API_KEY = '$2a$10$PBdovtf4GVCRv1mFrs4EReP7QAkgpDl4CE69Cn7I5CdN3Z44ZaXX.'; // Replace with your JSONBin.io API key
+const BIN_ID = '67c0ae51ad19ca34f813a934'; // Replace with your Bin ID
+const API_KEY = '$2a$10$PBdovtf4GVCRv1mFrs4EReP7QAkgpDl4CE69Cn7I5CdN3Z44ZaXX.'; // Replace with your API Key
 const API_URL = `https://api.jsonbin.io/v3/b/${BIN_ID}`;
 
 // Fetch items from JSONBin
@@ -25,8 +25,6 @@ function displayItems(items) {
       <p class="text-gray-600"><span class="font-semibold">Price per Qty:</span> MVR ${item.priceQty}</p>
     </div>
   `).join('');
-}
-}
 }
 
 // Refresh items every 5 seconds
