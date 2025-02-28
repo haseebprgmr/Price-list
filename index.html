@@ -3,40 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Item Price List</title>
+  <title>Admin Panel</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-  <link href="styles.css" rel="stylesheet">
 </head>
-<body class="bg-gradient-to-r from-blue-50 to-purple-50">
+<body class="bg-gray-100">
   <div class="container mx-auto p-4">
-    <!-- Header -->
-    <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold text-purple-800 mb-2">Item Price List</h1>
-      <p class="text-gray-600">Real-time prices in MVR (Maldivian Rufiyaa)</p>
-    </header>
-
-    <!-- Item List -->
-    <div id="item-list" class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <h1 class="text-3xl font-bold text-center mb-8">Admin Panel</h1>
+    <form id="item-form" class="mb-8">
+      <input type="text" id="item-name" placeholder="Item Name" class="border p-2 w-full mb-2">
+      <input type="number" id="item-price-kg" placeholder="Price per Kg" class="border p-2 w-full mb-2">
+      <input type="number" id="item-price-qty" placeholder="Price per Quantity" class="border p-2 w-full mb-2">
+      <button type="submit" class="bg-blue-500 text-white p-2 w-full">Add Item</button>
+    </form>
+    <div id="admin-item-list">
       <!-- Items will be dynamically loaded here -->
     </div>
-
-    <!-- Contact Icons -->
-    <div class="mt-12 text-center">
-      <h2 class="text-xl font-semibold text-gray-700 mb-4">Contact Us</h2>
-      <div class="flex justify-center space-x-6">
-        <a href="#" class="text-purple-600 hover:text-purple-800 transition duration-300">
-          <i class="fab fa-viber text-3xl"></i>
-        </a>
-        <a href="#" class="text-green-600 hover:text-green-800 transition duration-300">
-          <i class="fab fa-whatsapp text-3xl"></i>
-        </a>
-        <a href="#" class="text-blue-500 hover:text-blue-700 transition duration-300">
-          <i class="fab fa-telegram text-3xl"></i>
-        </a>
-      </div>
-    </div>
   </div>
-  <script src="script.js"></script>
+  <script src="admin.js"></script>
 </body>
 </html>
